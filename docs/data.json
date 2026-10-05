@@ -4,9 +4,9 @@
   "first": "2024-03-08",
   "last": "2026-09-19",
   "active_days": 68,
-  "est_hours": 145,
   "films": 29,
   "episodes": 123,
+  "est_hours": 145,
   "top_day": {
     "date": "2026-07-01",
     "views": 15
@@ -185,19 +185,19 @@
       "episodes": 10
     },
     {
-      "show": "To Kill a Monkey",
-      "episodes": 8
-    },
-    {
       "show": "Boots",
       "episodes": 8
     },
     {
-      "show": "Chilling Adventures of Sabrina",
-      "episodes": 4
+      "show": "To Kill a Monkey",
+      "episodes": 8
     },
     {
       "show": "Bad Influencer",
+      "episodes": 4
+    },
+    {
+      "show": "Chilling Adventures of Sabrina",
       "episodes": 4
     }
   ],
@@ -251,19 +251,14 @@
       "titles": 10
     },
     {
-      "country": "United Kingdom",
-      "iso": "826",
-      "titles": 3
-    },
-    {
       "country": "South Africa",
       "iso": "710",
       "titles": 3
     },
     {
-      "country": "South Korea",
-      "iso": "410",
-      "titles": 2
+      "country": "United Kingdom",
+      "iso": "826",
+      "titles": 3
     },
     {
       "country": "France",
@@ -271,18 +266,24 @@
       "titles": 2
     },
     {
-      "country": "Kenya",
-      "iso": "404",
-      "titles": 1
+      "country": "South Korea",
+      "iso": "410",
+      "titles": 2
     },
     {
       "country": "Germany",
       "iso": "276",
+      "titles": 1
+    },
+    {
+      "country": "Kenya",
+      "iso": "404",
       "titles": 1
     }
   ],
   "unknown_country": 6,
   "binges": 16,
   "biggest_binge": "The Night Agent",
-  "biggest_binge_n": 8
+  "biggest_binge_n": 8,
+  "biggest_binge_date": "2026-07-03"
 }

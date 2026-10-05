@@ -100,6 +100,7 @@ details summary { cursor: pointer; }
 
 .method li { margin-bottom: 8px; color: var(--muted); }
 .method b { color: var(--ink); }
+code { font: 500 .85em ui-monospace, Menlo, monospace; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
 footer { padding: 40px 0; color: var(--faint); font-size: .88rem; border-top: 1px solid var(--line); }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 </style>
@@ -184,12 +185,12 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     </div>
     <div class="panel method">
       <h3>How I did it</h3>
-      <div class="sub">Python, from raw export to this page</div>
+      <div class="sub">SQL, Python and plain JavaScript</div>
       <ul>
         <li><b>Data:</b> my Netflix viewing history export (Account, Profile, Viewing activity, Download all). Each row is a title and the date I watched it.</li>
-        <li><b>Cleaning:</b> parsed the dates and split titles like "The Night Agent: Season 3: Orion" into the show name and episode.</li>
-        <li><b>Tagging:</b> hand-tagged all 73 shows and films with a genre, film or series, and country of production in a lookup table, then joined it to the history.</li>
-        <li><b>Analysis:</b> monthly and weekday counts, top series, binge sessions (3+ episodes of one show in a day) and country and genre splits.</li>
+        <li><b>Cleaning (SQL):</b> loaded the raw export into SQLite, converted Netflix's "9/19/26" text dates into real ISO dates, and split titles like "The Night Agent: Season 3: Orion" into the show and the episode.</li>
+        <li><b>Tagging:</b> hand-tagged all 73 shows and films with a genre, film or series, and country of production in a lookup table, then joined it to the history in SQL.</li>
+        <li><b>Analysis (SQL):</b> a recursive CTE to fill in months with no viewing, <code>GROUP BY</code> and <code>HAVING</code> to find binge sessions (three or more episodes of one show in a day), plus monthly, weekday, genre and country breakdowns.</li>
         <li><b>Watch time:</b> Netflix doesn't export durations, so hours are an estimate at 45 minutes per episode and 110 per film.</li>
         <li><b>Visuals:</b> charts drawn as SVG in plain JavaScript; the world map is pre-rendered with d3-geo and Natural Earth data.</li>
       </ul>
@@ -216,6 +217,11 @@ const moveTip = (e) => {
 };
 const hideTip = () => { tip.style.opacity = 0; };
 
+// numbers under ten as words, for running text
+const words = (n, cap = false) => {
+  const w = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"][n] ?? String(n);
+  return cap ? w[0].toUpperCase() + w.slice(1) : w;
+};
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const monthLabel = (m) => { const [y, mo] = m.split("-"); return `${MONTHS[+mo - 1]} ${y}`; };
 const longDate = (iso) => new Date(iso + "T00:00").toLocaleDateString("en-IE", { day: "numeric", month: "long", year: "numeric" });
@@ -266,11 +272,11 @@ function hbars(el, items, name, value) {
 
   const firstYear = d.first.slice(0, 4);
   document.getElementById("tiles").innerHTML = [
-    [d.total_views, "titles and episodes watched"],
-    [d.unique_titles, "different shows and films"],
-    ["~" + d.est_hours, "estimated hours of viewing"],
-    [d.binges, "binge sessions (3+ eps in a day)"],
-    [d.top_day.views, `watched on my biggest day, ${longDate(d.top_day.date)}`],
+    [d.total_views, "Titles and episodes watched"],
+    [d.unique_titles, "Different shows and films"],
+    ["~" + d.est_hours, "Estimated hours of viewing"],
+    [d.binges, "Binge sessions of three or more episodes in a day"],
+    [d.top_day.views, `Watched on my biggest day, ${longDate(d.top_day.date)}`],
   ].map(([n, l]) => `<div class="tile"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
 
   // months
@@ -283,7 +289,7 @@ function hbars(el, items, name, value) {
     tipFmt: (m) => `<b>${monthLabel(m.month)}</b>${m.views} title${m.views === 1 ? "" : "s"}`,
   };
   document.getElementById("monthsCallout").innerHTML =
-    `<b>${monthLabel(peak.month)}</b> alone was ${peak.views} titles, ${Math.round((peak.views / d.total_views) * 100)}% of everything I watched in two and a half years. I watched nothing at all in ${empty} of the ${d.months.length} months.`;
+    `<b>${new Date(peak.month + "-01T00:00").toLocaleDateString("en-IE", { month: "long", year: "numeric" })}</b> alone accounted for ${peak.views} titles, ${Math.round((peak.views / d.total_views) * 100)}% of everything I watched in two and a half years. I watched nothing at all in ${words(empty)} of the ${d.months.length} months.`;
   document.getElementById("monthsTable").innerHTML = "<tr><th>Month</th><th class='num'>Titles</th></tr>" +
     d.months.map((m) => `<tr><td>${monthLabel(m.month)}</td><td class="num">${m.views}</td></tr>`).join("");
 
@@ -296,7 +302,7 @@ function hbars(el, items, name, value) {
     tipFmt: (w) => `<b>${w.day}</b>${w.views} titles`,
   };
   document.getElementById("weekdayCallout").innerHTML =
-    `<b>${Math.round((weekend / d.total_views) * 100)}%</b> of my viewing happens Friday to Sunday. Saturday is the top day, Tuesday the quietest.`;
+    `<b>${Math.round((weekend / d.total_views) * 100)}%</b> of my viewing happens Friday to Sunday. Saturday is my top day and Tuesday the quietest.`;
 
   // charts are drawn at their real pixel width, so redraw on resize
   const drawCharts = () => {
@@ -310,7 +316,7 @@ function hbars(el, items, name, value) {
   // series
   hbars(document.getElementById("series"), d.top_series, (s) => s.show, (s) => s.episodes);
   document.getElementById("bingeCallout").innerHTML =
-    `My biggest binge: <b>${d.biggest_binge_n} episodes of ${d.biggest_binge}</b> in a single day.`;
+    `My biggest binge was <b>${words(d.biggest_binge_n)} episodes of ${d.biggest_binge}</b> in a single day, on ${longDate(d.biggest_binge_date)}.`;
 
   // map + countries
   document.getElementById("map").innerHTML = mapSvg;
@@ -320,13 +326,13 @@ function hbars(el, items, name, value) {
     p.addEventListener("mouseleave", hideTip);
   });
   hbars(document.getElementById("countries"), d.countries, (c) => c.country, (c) => c.titles);
-  document.getElementById("unknownNote").textContent = `${d.unknown_country} titles I couldn't confidently place are left off the map.`;
+  document.getElementById("unknownNote").textContent = `${words(d.unknown_country, true)} titles I couldn't confidently place are left off the map.`;
 
   // genres
   hbars(document.getElementById("genres"), d.genres, (g) => g.genre, (g) => g.titles);
   const g0 = d.genres[0];
   document.getElementById("genreCallout").innerHTML =
-    `<b>${g0.genre}</b> wins by a distance: ${g0.titles} of my ${d.unique_titles} titles, about ${Math.round((g0.titles / d.unique_titles) * 100)}%.`;
+    `<b>${g0.genre}</b> wins by a distance, with ${g0.titles} of my ${d.unique_titles} titles (about ${Math.round((g0.titles / d.unique_titles) * 100)}%).`;
 })();
 </script>
 </body>
