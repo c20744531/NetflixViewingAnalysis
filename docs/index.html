@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Netflix Viewing Analysis</title>
+<meta name="description" content="What two and a half years of my Netflix history says about how I watch: binges, weekends, genres and where my shows come from. By Azeez Folawiyo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0e0e0e;
+  --surface: #181818;
+  --surface-2: #222;
+  --line: #2c2c2c;
+  --ink: #f5f5f1;
+  --muted: #a3a3a3;
+  --faint: #6b6b6b;
+  --red: #e50914;
+  --red-hi: #ff3b44;
+  --m1: #4a1316;
+  --m2: #8a1219;
+  --m3: #c8101a;
+  --m4: #ff4d55;
+  --land: #2a2a2a;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 Inter, system-ui, sans-serif; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+h1, h2 { font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; letter-spacing: .02em; line-height: 1; margin: 0 0 .3em; }
+h2 { font-size: clamp(2rem, 5vw, 2.8rem); }
+h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+p { margin: 0 0 1em; }
+a { color: var(--red-hi); }
+
+/* hero */
+.hero { padding: 72px 0 40px; background: radial-gradient(ellipse at 20% 0%, rgba(229, 9, 20, .28), transparent 60%); }
+.tag { display: inline-block; color: var(--red-hi); font-weight: 600; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 14px; }
+.hero h1 { font-size: clamp(3.4rem, 10vw, 6.5rem); }
+.hero h1 span { color: var(--red); }
+.lede { font-size: 1.15rem; color: var(--muted); max-width: 40em; }
+
+/* tiles */
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 32px 0 8px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.tile .n { font-family: "Bebas Neue", sans-serif; font-size: 2.8rem; line-height: 1; }
+.tile .l { color: var(--muted); font-size: .88rem; margin-top: 6px; }
+@media (max-width: 860px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+
+section { padding: 56px 0; border-top: 1px solid var(--line); }
+.head { max-width: 680px; margin-bottom: 28px; }
+.head p { color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-map { grid-template-columns: 1.6fr 1fr; }
+@media (max-width: 860px) { .grid2, .grid-map { grid-template-columns: 1fr; } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; position: relative; min-width: 0; }
+.panel .sub { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
+.callout { border-left: 3px solid var(--red); padding: 2px 0 2px 14px; color: var(--ink); margin-top: 16px; font-size: .95rem; }
+.callout b { color: var(--red-hi); }
+
+/* charts */
+svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { fill: var(--muted); font: 500 11px Inter, sans-serif; }
+.chart .grid line { stroke: var(--line); }
+.chart .bar { fill: var(--red); }
+.chart .bar.dim { fill: #5a1a1d; }
+.chart .hit { fill: transparent; cursor: default; }
+.chart .hit:hover + .bar, .chart .bar.hover { fill: var(--red-hi); }
+.chart .val { fill: var(--ink); font-weight: 600; }
+
+.hbars { display: grid; gap: 10px; }
+.hbar { display: grid; grid-template-columns: minmax(0, 11em) 1fr 2.5em; align-items: center; gap: 10px; font-size: .92rem; }
+.hbar .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.hbar .track { height: 12px; }
+.hbar .fill { height: 100%; background: var(--red); border-radius: 0 4px 4px 0; transition: background .15s; }
+.hbar:hover .fill { background: var(--red-hi); }
+.hbar .v { text-align: right; font-weight: 600; }
+
+/* map */
+.map svg { width: 100%; height: auto; display: block; }
+.map path { fill: var(--land); stroke: var(--bg); stroke-width: .5; }
+.map path.m1 { fill: var(--m1); } .map path.m2 { fill: var(--m2); } .map path.m3 { fill: var(--m3); } .map path.m4 { fill: var(--m4); }
+.map path[data-country]:hover { stroke: var(--ink); stroke-width: 1.2; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--muted); margin-top: 12px; align-items: center; }
+.legend i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+
+.tip { position: fixed; pointer-events: none; background: #fff; color: #111; font-size: .85rem; padding: 6px 10px; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,.5); opacity: 0; transition: opacity .1s; z-index: 20; white-space: nowrap; }
+.tip b { display: block; }
+
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 500; }
+td.num, th.num { text-align: right; }
+details { margin-top: 14px; color: var(--muted); font-size: .9rem; }
+details summary { cursor: pointer; }
+
+.method li { margin-bottom: 8px; color: var(--muted); }
+.method b { color: var(--ink); }
+footer { padding: 40px 0; color: var(--faint); font-size: .88rem; border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="tag">Data analysis project</span>
+    <h1>What I <span>Actually</span> Watch</h1>
+    <p class="lede">I downloaded my full Netflix viewing history and analysed it to see how I really watch: when I binge, which days I watch most, what genres I go for and where my shows are made.</p>
+    <div class="tiles" id="tiles"></div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <h2>Feast or famine</h2>
+      <p>I don't watch steadily. Most months I barely open Netflix, then I'll go through a whole series in a week.</p>
+    </div>
+    <div class="panel">
+      <h3>Titles watched per month</h3>
+      <div class="sub" id="monthsSub"></div>
+      <div id="months"></div>
+      <div class="callout" id="monthsCallout"></div>
+      <details><summary>View as table</summary><table id="monthsTable"></table></details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap grid2">
+    <div class="panel">
+      <h3>Which days I watch</h3>
+      <div class="sub">Titles watched by day of the week</div>
+      <div id="weekdays"></div>
+      <div class="callout" id="weekdayCallout"></div>
+    </div>
+    <div class="panel">
+      <h3>Most-watched series</h3>
+      <div class="sub">Episodes watched</div>
+      <div class="hbars" id="series"></div>
+      <div class="callout" id="bingeCallout"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <h2>Where my shows come from</h2>
+      <p>I tagged every title by the country it was made in. Hollywood dominates, but Nollywood is a clear second.</p>
+    </div>
+    <div class="grid2 grid-map">
+      <div class="panel map">
+        <div id="map"></div>
+        <div class="legend">
+          <span><i style="background:var(--m1)"></i>1 title</span>
+          <span><i style="background:var(--m2)"></i>2 to 3</span>
+          <span><i style="background:var(--m3)"></i>4 to 10</span>
+          <span><i style="background:var(--m4)"></i>11+</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Titles by country</h3>
+        <div class="sub">Unique titles, not episodes</div>
+        <div class="hbars" id="countries"></div>
+        <p class="sub" id="unknownNote" style="margin-top:14px"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap grid2">
+    <div class="panel">
+      <h3>Genres</h3>
+      <div class="sub">Unique titles by main genre</div>
+      <div class="hbars" id="genres"></div>
+      <div class="callout" id="genreCallout"></div>
+    </div>
+    <div class="panel method">
+      <h3>How I did it</h3>
+      <div class="sub">Python, from raw export to this page</div>
+      <ul>
+        <li><b>Data:</b> my Netflix viewing history export (Account, Profile, Viewing activity, Download all). Each row is a title and the date I watched it.</li>
+        <li><b>Cleaning:</b> parsed the dates and split titles like "The Night Agent: Season 3: Orion" into the show name and episode.</li>
+        <li><b>Tagging:</b> hand-tagged all 73 shows and films with a genre, film or series, and country of production in a lookup table, then joined it to the history.</li>
+        <li><b>Analysis:</b> monthly and weekday counts, top series, binge sessions (3+ episodes of one show in a day) and country and genre splits.</li>
+        <li><b>Watch time:</b> Netflix doesn't export durations, so hours are an estimate at 45 minutes per episode and 110 per film.</li>
+        <li><b>Visuals:</b> charts drawn as SVG in plain JavaScript; the world map is pre-rendered with d3-geo and Natural Earth data.</li>
+      </ul>
+      <p style="margin:0"><a href="https://github.com/c20744531/NetflixViewingAnalysis">See the code on GitHub</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Azeez Folawiyo · Not affiliated with Netflix</span>
+    <a href="https://github.com/c20744531">github.com/c20744531</a>
+  </div>
+</footer>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const tip = document.getElementById("tip");
+const showTip = (e, html) => { tip.innerHTML = html; tip.style.opacity = 1; moveTip(e); };
+const moveTip = (e) => {
+  const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+  tip.style.left = x + "px"; tip.style.top = (e.clientY - tip.offsetHeight - 12) + "px";
+};
+const hideTip = () => { tip.style.opacity = 0; };
+
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const monthLabel = (m) => { const [y, mo] = m.split("-"); return `${MONTHS[+mo - 1]} ${y}`; };
+const longDate = (iso) => new Date(iso + "T00:00").toLocaleDateString("en-IE", { day: "numeric", month: "long", year: "numeric" });
+
+// vertical bar chart, one series
+function columns(el, items, { label, value, tickEvery = 1, tickFmt = (d) => d, tipFmt, height = 220, highlight }) {
+  const W = Math.max(280, el.clientWidth), H = height, padL = 30, padB = 26, padT = 18;
+  const max = Math.max(...items.map(value));
+  const top = Math.ceil(max / 10) * 10 || 10;
+  const bw = (W - padL) / items.length;
+  const gap = Math.max(2, bw * 0.22);
+  const y = (v) => padT + (H - padT - padB) * (1 - v / top);
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  s += `<g class="grid">`;
+  for (let t = 0; t <= top; t += top / 2) s += `<line x1="${padL}" x2="${W}" y1="${y(t)}" y2="${y(t)}"/><text x="${padL - 6}" y="${y(t) + 4}" text-anchor="end">${t}</text>`;
+  s += `</g>`;
+  items.forEach((d, i) => {
+    const v = value(d), x = padL + i * bw + gap / 2, w = bw - gap, yy = y(v), h = H - padB - yy;
+    const r = Math.min(4, w / 2, h);
+    const path = h > 0 ? `M${x},${H - padB}V${yy + r}Q${x},${yy} ${x + r},${yy}H${x + w - r}Q${x + w},${yy} ${x + w},${yy + r}V${H - padB}Z` : "";
+    s += `<rect class="hit" x="${padL + i * bw}" y="${padT}" width="${bw}" height="${H - padT - padB}" data-i="${i}"/>`;
+    s += `<path class="bar${highlight && !highlight(d) ? " dim" : ""}" d="${path}" data-i="${i}"/>`;
+    if (i % tickEvery === 0) s += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle">${tickFmt(label(d), i)}</text>`;
+  });
+  s += `</svg>`;
+  el.innerHTML = s;
+  const bars = el.querySelectorAll(".bar");
+  el.querySelectorAll(".hit").forEach((h) => {
+    const i = +h.dataset.i;
+    h.addEventListener("mousemove", (e) => { bars[i].classList.add("hover"); showTip(e, tipFmt(items[i])); });
+    h.addEventListener("mouseleave", () => { bars[i].classList.remove("hover"); hideTip(); });
+  });
+}
+
+function hbars(el, items, name, value) {
+  const max = Math.max(...items.map(value));
+  el.innerHTML = items.map((d) => `
+    <div class="hbar"><span class="name" title="${name(d)}">${name(d)}</span>
+    <div class="track"><div class="fill" style="width:${(value(d) / max) * 100}%"></div></div>
+    <span class="v">${value(d)}</span></div>`).join("");
+}
+
+(async () => {
+  const [d, mapSvg] = await Promise.all([
+    fetch("data.json").then((r) => r.json()),
+    fetch("map.svg").then((r) => r.text()),
+  ]);
+
+  const firstYear = d.first.slice(0, 4);
+  document.getElementById("tiles").innerHTML = [
+    [d.total_views, "titles and episodes watched"],
+    [d.unique_titles, "different shows and films"],
+    ["~" + d.est_hours, "estimated hours of viewing"],
+    [d.binges, "binge sessions (3+ eps in a day)"],
+    [d.top_day.views, `watched on my biggest day, ${longDate(d.top_day.date)}`],
+  ].map(([n, l]) => `<div class="tile"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+
+  // months
+  const peak = d.months.reduce((a, b) => (b.views > a.views ? b : a));
+  const empty = d.months.filter((m) => m.views === 0).length;
+  document.getElementById("monthsSub").textContent = `${monthLabel(d.months[0].month)} to ${monthLabel(d.months.at(-1).month)}`;
+  const monthOpts = {
+    label: (m) => m.month, value: (m) => m.views, height: 240,
+    tickFmt: (m) => (m.endsWith("-01") || m === d.months[0].month ? monthLabel(m) : ""),
+    tipFmt: (m) => `<b>${monthLabel(m.month)}</b>${m.views} title${m.views === 1 ? "" : "s"}`,
+  };
+  document.getElementById("monthsCallout").innerHTML =
+    `<b>${monthLabel(peak.month)}</b> alone was ${peak.views} titles, ${Math.round((peak.views / d.total_views) * 100)}% of everything I watched in two and a half years. I watched nothing at all in ${empty} of the ${d.months.length} months.`;
+  document.getElementById("monthsTable").innerHTML = "<tr><th>Month</th><th class='num'>Titles</th></tr>" +
+    d.months.map((m) => `<tr><td>${monthLabel(m.month)}</td><td class="num">${m.views}</td></tr>`).join("");
+
+  // weekdays
+  const wk = d.weekdays;
+  const weekend = wk.filter((w) => ["Fri", "Sat", "Sun"].includes(w.day)).reduce((a, w) => a + w.views, 0);
+  const weekOpts = {
+    label: (w) => w.day, value: (w) => w.views, height: 220,
+    highlight: (w) => ["Fri", "Sat", "Sun"].includes(w.day),
+    tipFmt: (w) => `<b>${w.day}</b>${w.views} titles`,
+  };
+  document.getElementById("weekdayCallout").innerHTML =
+    `<b>${Math.round((weekend / d.total_views) * 100)}%</b> of my viewing happens Friday to Sunday. Saturday is the top day, Tuesday the quietest.`;
+
+  // charts are drawn at their real pixel width, so redraw on resize
+  const drawCharts = () => {
+    columns(document.getElementById("months"), d.months, monthOpts);
+    columns(document.getElementById("weekdays"), wk, weekOpts);
+  };
+  drawCharts();
+  let resizeTimer;
+  window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawCharts, 150); });
+
+  // series
+  hbars(document.getElementById("series"), d.top_series, (s) => s.show, (s) => s.episodes);
+  document.getElementById("bingeCallout").innerHTML =
+    `My biggest binge: <b>${d.biggest_binge_n} episodes of ${d.biggest_binge}</b> in a single day.`;
+
+  // map + countries
+  document.getElementById("map").innerHTML = mapSvg;
+  document.querySelectorAll("#map path[data-country]").forEach((p) => {
+    p.querySelector("title")?.remove();
+    p.addEventListener("mousemove", (e) => showTip(e, `<b>${p.dataset.country}</b>${p.dataset.titles} title${p.dataset.titles === "1" ? "" : "s"}`));
+    p.addEventListener("mouseleave", hideTip);
+  });
+  hbars(document.getElementById("countries"), d.countries, (c) => c.country, (c) => c.titles);
+  document.getElementById("unknownNote").textContent = `${d.unknown_country} titles I couldn't confidently place are left off the map.`;
+
+  // genres
+  hbars(document.getElementById("genres"), d.genres, (g) => g.genre, (g) => g.titles);
+  const g0 = d.genres[0];
+  document.getElementById("genreCallout").innerHTML =
+    `<b>${g0.genre}</b> wins by a distance: ${g0.titles} of my ${d.unique_titles} titles, about ${Math.round((g0.titles / d.unique_titles) * 100)}%.`;
+})();
+</script>
+</body>
+</html>

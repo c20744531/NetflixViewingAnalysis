@@ -1,0 +1,288 @@
+{
+  "total_views": 152,
+  "unique_titles": 73,
+  "first": "2024-03-08",
+  "last": "2026-09-19",
+  "active_days": 68,
+  "est_hours": 145,
+  "films": 29,
+  "episodes": 123,
+  "top_day": {
+    "date": "2026-07-01",
+    "views": 15
+  },
+  "months": [
+    {
+      "month": "2024-03",
+      "views": 3
+    },
+    {
+      "month": "2024-04",
+      "views": 0
+    },
+    {
+      "month": "2024-05",
+      "views": 2
+    },
+    {
+      "month": "2024-06",
+      "views": 2
+    },
+    {
+      "month": "2024-07",
+      "views": 3
+    },
+    {
+      "month": "2024-08",
+      "views": 0
+    },
+    {
+      "month": "2024-09",
+      "views": 4
+    },
+    {
+      "month": "2024-10",
+      "views": 0
+    },
+    {
+      "month": "2024-11",
+      "views": 0
+    },
+    {
+      "month": "2024-12",
+      "views": 4
+    },
+    {
+      "month": "2025-01",
+      "views": 1
+    },
+    {
+      "month": "2025-02",
+      "views": 0
+    },
+    {
+      "month": "2025-03",
+      "views": 1
+    },
+    {
+      "month": "2025-04",
+      "views": 2
+    },
+    {
+      "month": "2025-05",
+      "views": 0
+    },
+    {
+      "month": "2025-06",
+      "views": 0
+    },
+    {
+      "month": "2025-07",
+      "views": 0
+    },
+    {
+      "month": "2025-08",
+      "views": 2
+    },
+    {
+      "month": "2025-09",
+      "views": 3
+    },
+    {
+      "month": "2025-10",
+      "views": 11
+    },
+    {
+      "month": "2025-11",
+      "views": 23
+    },
+    {
+      "month": "2025-12",
+      "views": 11
+    },
+    {
+      "month": "2026-01",
+      "views": 1
+    },
+    {
+      "month": "2026-02",
+      "views": 2
+    },
+    {
+      "month": "2026-03",
+      "views": 0
+    },
+    {
+      "month": "2026-04",
+      "views": 1
+    },
+    {
+      "month": "2026-05",
+      "views": 4
+    },
+    {
+      "month": "2026-06",
+      "views": 17
+    },
+    {
+      "month": "2026-07",
+      "views": 45
+    },
+    {
+      "month": "2026-08",
+      "views": 2
+    },
+    {
+      "month": "2026-09",
+      "views": 8
+    }
+  ],
+  "weekdays": [
+    {
+      "day": "Mon",
+      "views": 16
+    },
+    {
+      "day": "Tue",
+      "views": 10
+    },
+    {
+      "day": "Wed",
+      "views": 20
+    },
+    {
+      "day": "Thu",
+      "views": 11
+    },
+    {
+      "day": "Fri",
+      "views": 34
+    },
+    {
+      "day": "Sat",
+      "views": 39
+    },
+    {
+      "day": "Sun",
+      "views": 22
+    }
+  ],
+  "top_series": [
+    {
+      "show": "The Night Agent",
+      "episodes": 14
+    },
+    {
+      "show": "Power",
+      "episodes": 13
+    },
+    {
+      "show": "Beauty in Black",
+      "episodes": 10
+    },
+    {
+      "show": "Teach You a Lesson",
+      "episodes": 10
+    },
+    {
+      "show": "To Kill a Monkey",
+      "episodes": 8
+    },
+    {
+      "show": "Boots",
+      "episodes": 8
+    },
+    {
+      "show": "Chilling Adventures of Sabrina",
+      "episodes": 4
+    },
+    {
+      "show": "Bad Influencer",
+      "episodes": 4
+    }
+  ],
+  "genres": [
+    {
+      "genre": "Crime & Thriller",
+      "titles": 24
+    },
+    {
+      "genre": "Drama",
+      "titles": 18
+    },
+    {
+      "genre": "Sci-Fi & Fantasy",
+      "titles": 9
+    },
+    {
+      "genre": "Comedy",
+      "titles": 8
+    },
+    {
+      "genre": "Romance",
+      "titles": 6
+    },
+    {
+      "genre": "Documentary",
+      "titles": 4
+    },
+    {
+      "genre": "Sports",
+      "titles": 2
+    },
+    {
+      "genre": "Reality",
+      "titles": 1
+    },
+    {
+      "genre": "Talk Show",
+      "titles": 1
+    }
+  ],
+  "countries": [
+    {
+      "country": "United States",
+      "iso": "840",
+      "titles": 45
+    },
+    {
+      "country": "Nigeria",
+      "iso": "566",
+      "titles": 10
+    },
+    {
+      "country": "United Kingdom",
+      "iso": "826",
+      "titles": 3
+    },
+    {
+      "country": "South Africa",
+      "iso": "710",
+      "titles": 3
+    },
+    {
+      "country": "South Korea",
+      "iso": "410",
+      "titles": 2
+    },
+    {
+      "country": "France",
+      "iso": "250",
+      "titles": 2
+    },
+    {
+      "country": "Kenya",
+      "iso": "404",
+      "titles": 1
+    },
+    {
+      "country": "Germany",
+      "iso": "276",
+      "titles": 1
+    }
+  ],
+  "unknown_country": 6,
+  "binges": 16,
+  "biggest_binge": "The Night Agent",
+  "biggest_binge_n": 8
+}
